@@ -1,4 +1,4 @@
-# Sudoku
+# Pydoku
 
 A Sudoku application written in Python.
 
