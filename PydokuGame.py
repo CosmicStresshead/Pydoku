@@ -1,14 +1,21 @@
 from os import path
 
-class SudokuGame:
+class PydokuGame:
 
   def __init__(self):
-    self.board = [[0] * 9] * 9
+    self._board = [[0] * 9] * 9
 
-  def load(self, path: str) -> bool:
+  def get_board(self) -> None:
+    return self._board
+  
+  def set_board(self, value_array: list) -> None:
+    if self.validate_data(value_array):
+      self._board = value_array
+
+  def load(self, filepath: str) -> bool:
     data = []
     # read file
-    with open(path, "r") as f:
+    with open(path.join("puzzles", filepath), "r") as f:
       for i in range(9):
         try:
           data.append([int(c) for c in f.readline()[:9]])
@@ -16,13 +23,13 @@ class SudokuGame:
           print(f"ERROR: Could not load from file: {e}")
           return False
     # validate
-    if not self.validate_file(data):
+    if not self.validate_data(data):
       return False
     # if valid, set board values and return True
-    self.board = data
+    self._board = data
     return True
   
-  def validate_file(self, data: list) -> bool:
+  def validate_data(self, data: list) -> bool:
     # validate data
     if len(data) != 9:
       return False
@@ -35,19 +42,19 @@ class SudokuGame:
     return True
 
   def print(self) -> None:
-    for row in self.board:
+    for row in self._board:
         print(" ".join(map(str, row)))
 
   def get_board(self):
-    return self.board
+    return self._board
 
   def get_row(self, index: int) -> list:
-    return self.board[index]
+    return self._board[index]
   
   def get_column(self, index: int) -> list:
     column = []
     for row in range(9):
-      column.append(self.board[row][index])
+      column.append(self._board[row][index])
     return column
   
   def get_subgrid(self, row: int, col: int) -> list:
@@ -58,7 +65,7 @@ class SudokuGame:
     col_end = (col * 3) + 3
     for row in range(row_start, row_end):
       for col in range(col_start, col_end):
-        values.append(self.board[row][col])
+        values.append(self._board[row][col])
     return values
 
   def validate_no_duplicates(self, values):
@@ -84,7 +91,7 @@ class SudokuGame:
     return True
   
   def is_valid(self, row: int, col: int, val: int) -> bool:
-    current = self.board[row][col]
+    current = self._board[row][col]
     sub_col = col // 3
     sub_row = row // 3
     # compile set of all values, except current value
@@ -100,22 +107,22 @@ class SudokuGame:
       # if all columns completed in current row, solve next row
       return self.solve(r+1, 0)
     # skip pre-filled values
-    elif self.board[r][c] != 0:
+    elif self._board[r][c] != 0:
       return self.solve(r, c+1)
     else:
       # try a valid value and move on until solved
       for val in range(1, 10):
         if self.is_valid(r, c, val):
-          self.board[r][c] = val
+          self._board[r][c] = val
           if self.solve(r, c+1):
             return True
-          self.board[r][c] = 0
+          self._board[r][c] = 0
       # return to starting point to try next value
       return False
     
 
 if __name__ == "__main__":
-  g = SudokuGame()
-  g.load(path.join("puzzles", "1"))
+  g = PydokuGame()
+  g.load("1")
   g.solve()
   g.print()
