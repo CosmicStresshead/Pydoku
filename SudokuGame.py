@@ -1,3 +1,5 @@
+from os import path
+
 class SudokuGame:
 
   def __init__(self):
@@ -114,6 +116,6 @@ class SudokuGame:
 
 if __name__ == "__main__":
   g = SudokuGame()
-  g.load("example_2")
+  g.load(path.join("puzzles", "1"))
   g.solve()
   g.print()
