@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem
+from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout
 from PyQt6.QtCore import Qt
 from PydokuGame import PydokuGame
 
@@ -46,7 +46,6 @@ class PydokuApp(QWidget):
 
     solve_button = QPushButton(text="Solve")
     
-
     # set main layout
     self.grid_layout = grid_layout
     grid_container.addLayout(grid_layout)
