@@ -3,12 +3,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QGridLayout, QPush
 from PyQt6.QtCore import Qt
 from PydokuGame import PydokuGame
 
-stylesheets = dict()
-
-stylesheets["normal_cell"] = "background: white; color: black; font-size: 20pt; font-weight: 400"
-stylesheets["prefilled_normal_cell"] = "background: white; color: black; font-size: 20pt; font-weight: 700"
-stylesheets["normal_cell_dark"] = "background: grey; color: black; font-size: 20pt; font-weight: 400"
-stylesheets["prefilled_cell_dark"] = "background: grey; color: black; font-size: 20pt; font-weight: 700"
+normal_cell = "background: white; color: black; font-size: 20pt; font-weight: 400; "
 
 
 
@@ -27,15 +22,15 @@ class PydokuApp(QWidget):
 
     for row in range(9):
       for col in range(9):
-        cell = QLineEdit()
-        cell.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        cell.setFixedHeight(32)
-        cell.setFixedWidth(32)
-        cell.setStyleSheet(stylesheets["normal_cell_dark"])
-        if (row//3 in [0, 2] and col//3 in [0, 2]) or (row//3 == 1 and col//3 == 1):
-          cell.setStyleSheet(stylesheets["normal_cell"])
-
-        grid_layout.addWidget(cell, row, col)
+        cell = Cell()
+        cell.widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        cell.widget.setFixedHeight(32)
+        cell.widget.setFixedWidth(32)
+        cell.widget.setStyleSheet(normal_cell)
+        cell.widget.setInputMask("d")
+        if ((row // 3) % 2) + ((col // 3) % 2) == 1:
+          cell.widget.setStyleSheet(normal_cell + "background: grey;")
+        grid_layout.addWidget(cell.widget, row, col)
         
     solve_button = QPushButton(text="Solve")
     solve_button.clicked.connect(self.solve)
@@ -54,6 +49,18 @@ class PydokuApp(QWidget):
   def load_file(self):
     filename, _ = QFileDialog.getOpenFileName(self, "Open file", self.game.game_dir, "Game files (*.pdg)")
     self.game.load(filename)
+
+    for row in range(9):
+      for col in range(9):
+        cell_value = str(self.game.get_board()[row][col])
+        if self.game.get_board()[row][col]:
+          self.grid_layout.itemAtPosition(row, col).widget().setStyleSheet(normal_cell + "font-weight: 700;")
+          self.grid_layout.itemAtPosition(row, col).widget().setDisabled(True)
+        else:
+          self.grid_layout.itemAtPosition(row, col).widget().setStyleSheet(normal_cell + "font-weight: 400;")
+          self.grid_layout.itemAtPosition(row, col).widget().setDisabled(False)
+          
+        
     self.update()
 
   def update(self):
@@ -68,6 +75,15 @@ class PydokuApp(QWidget):
     self.game.solve()
     self.update()
 
+
+class Cell:
+
+  def __init__(self, is_starting_value=False, is_dark:bool=False) -> None:
+    self.is_dark = is_dark
+    self.is_starting_value = is_starting_value
+    normal_style = "background: white; color: black; font-size: 20pt; font-weight: 400; "
+    self.widget = QLineEdit()
+    self.widget.setStyleSheet(normal_style + "background: grey; " * is_dark)
 
 if __name__ == "__main__":
   app = QApplication(sys.argv)
