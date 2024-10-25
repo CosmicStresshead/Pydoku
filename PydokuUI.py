@@ -15,8 +15,6 @@ class PydokuApp(QWidget):
     grid_container = QHBoxLayout()
     grid_layout = QGridLayout()
 
-    self.game.load("1")
-
     for row in range(9):
       for col in range(9):
         cell_value = str(self.game.get_board()[row][col])

@@ -4,6 +4,7 @@ class PydokuGame:
 
   def __init__(self):
     self._board = [[0] * 9] * 9
+    self.game_dir = "puzzles"
 
   def get_board(self) -> None:
     return self._board
@@ -15,7 +16,7 @@ class PydokuGame:
   def load(self, filepath: str) -> bool:
     data = []
     # read file
-    with open(path.join("puzzles", filepath), "r") as f:
+    with open(filepath, "r") as f:
       for i in range(9):
         try:
           data.append([int(c) for c in f.readline()[:9]])
@@ -121,8 +122,8 @@ class PydokuGame:
       return False
     
 
-if __name__ == "__main__":
-  g = PydokuGame()
-  g.load("1")
-  g.solve()
-  g.print()
+# if __name__ == "__main__":
+#   g = PydokuGame()
+#   g.load("2.pdg")
+#   # g.solve()
+#   g.print()
